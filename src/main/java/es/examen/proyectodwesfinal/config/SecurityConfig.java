@@ -18,8 +18,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers("/api/reservas/**").authenticated()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
@@ -30,6 +31,7 @@ public class SecurityConfig {
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // Auth0 suele poner los permisos en "permissions" o "scope"
         grantedAuthoritiesConverter.setAuthoritiesClaimName("permissions");
         grantedAuthoritiesConverter.setAuthorityPrefix("SCOPE_");
 
