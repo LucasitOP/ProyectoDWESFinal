@@ -13,11 +13,11 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([authHttpInterceptorFn])
     ),
     provideAuth0({
-      domain: 'dev-lucas-proyecto.us.auth0.com',
-      clientId: 'mLVvJhu1ND98QpZY3dHkVF0EswzCo0TJ',
+      domain: 'dev-lucas-proyecto.eu.auth0.com',
+      clientId: 'mLVvJhU1ND98QoZY3dHkVFOEswzCo0TJ',
       authorizationParams: {
         redirect_uri: window.location.origin,
-        audience: 'https://Timoc-Manager-reservas', // Tu API Identifier
+        audience: 'https://Timoc-Manager-reservas', // Descomentado y corregido
       },
       httpInterceptor: {
         allowedList: [

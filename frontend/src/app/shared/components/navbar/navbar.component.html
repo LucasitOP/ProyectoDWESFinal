@@ -12,19 +12,31 @@
         <li class="nav-item">
           <a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" routerLink="/">Inicio</a>
         </li>
-        <!-- Solo mostrar si está logueado -->
-        <li class="nav-item" *ngIf="auth.isAuthenticated$ | async">
-          <a class="nav-link" routerLinkActive="active" routerLink="/reservas">Mis Reservas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" routerLink="/platos">Menú</a>
-        </li>
+
+        <!-- Enlaces SOLO para usuarios logueados -->
+        <ng-container *ngIf="auth.isAuthenticated$ | async">
+          <li class="nav-item">
+            <a class="nav-link" routerLinkActive="active" routerLink="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLinkActive="active" routerLink="/reservas">Mis Reservas</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLinkActive="active" routerLink="/platos">Menú</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLinkActive="active" routerLink="/mesas">Mapa</a>
+          </li>
+        </ng-container>
       </ul>
+
       <div class="d-flex align-items-center">
         <!-- Si está logueado -->
         <ng-container *ngIf="auth.user$ | async as user">
-          <span class="text-light me-3">Hola, {{ user.name }}</span>
-          <button class="btn btn-outline-light" (click)="logout()">Cerrar Sesión</button>
+          <span class="text-light me-3 d-none d-lg-block">Hola, {{ user.name }}</span>
+          <button class="btn btn-outline-light btn-sm" (click)="logout()">
+            <i class="bi bi-box-arrow-right"></i> Salir
+          </button>
         </ng-container>
 
         <!-- Si NO está logueado -->
