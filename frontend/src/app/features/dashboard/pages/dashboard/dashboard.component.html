@@ -1,0 +1,102 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">Panel de Control</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+      <div class="btn-group me-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary">Compartir</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary">Exportar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjetas de Resumen -->
+  <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+    <div class="col">
+      <div class="card text-white bg-primary h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-calendar-check me-2"></i>Reservas Hoy</h5>
+          <p class="card-text display-4">12</p>
+          <small>3 pendientes de confirmar</small>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+          <a routerLink="/reservas" class="text-white text-decoration-none stretched-link">Ver todas <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card text-white bg-success h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-journal-richtext me-2"></i>Platos Activos</h5>
+          <p class="card-text display-4">24</p>
+          <small>Menú actualizado hace 2h</small>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+          <a routerLink="/platos" class="text-white text-decoration-none stretched-link">Gestionar Menú <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card text-white bg-warning h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title"><i class="bi bi-grid-3x3-gap me-2"></i>Ocupación</h5>
+          <p class="card-text display-4">65%</p>
+          <div class="progress mt-2" style="height: 5px;">
+            <div class="progress-bar bg-dark" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+        <div class="card-footer bg-transparent border-top-0">
+          <a href="#" class="text-white text-decoration-none stretched-link">Ver Mapa <i class="bi bi-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accesos Rápidos -->
+  <h3 class="h4 mb-3">Acciones Rápidas</h3>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    <div class="col">
+      <div class="card h-100 text-center p-4 border-0 shadow-sm hover-card">
+        <div class="card-body">
+          <div class="feature-icon bg-primary bg-gradient text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+            <i class="bi bi-plus-lg fs-4"></i>
+          </div>
+          <h5 class="card-title">Nueva Reserva</h5>
+          <a routerLink="/reservas/create" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card h-100 text-center p-4 border-0 shadow-sm hover-card">
+        <div class="card-body">
+          <div class="feature-icon bg-success bg-gradient text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+            <i class="bi bi-egg-fried fs-4"></i>
+          </div>
+          <h5 class="card-title">Añadir Plato</h5>
+          <a routerLink="/platos/create" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card h-100 text-center p-4 border-0 shadow-sm hover-card">
+        <div class="card-body">
+          <div class="feature-icon bg-info bg-gradient text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+            <i class="bi bi-map fs-4"></i>
+          </div>
+          <h5 class="card-title">Editar Mapa</h5>
+          <a href="#" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card h-100 text-center p-4 border-0 shadow-sm hover-card">
+        <div class="card-body">
+          <div class="feature-icon bg-secondary bg-gradient text-white rounded-circle mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+            <i class="bi bi-gear fs-4"></i>
+          </div>
+          <h5 class="card-title">Configuración</h5>
+          <a href="#" class="stretched-link"></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

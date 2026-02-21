@@ -1,0 +1,60 @@
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- Panel de Herramientas -->
+    <div class="col-md-3">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Herramientas</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small">Arrastra las mesas al plano.</p>
+
+          <div class="d-grid gap-3">
+            <div class="mesa-preview mesa-cuadrada" draggable="true" (dragstart)="onDragStart($event, 'cuadrada')">
+              <i class="bi bi-square"></i> Mesa Cuadrada (4 pax)
+            </div>
+            <div class="mesa-preview mesa-redonda" draggable="true" (dragstart)="onDragStart($event, 'redonda')">
+              <i class="bi bi-circle"></i> Mesa Redonda (6 pax)
+            </div>
+            <div class="mesa-preview mesa-larga" draggable="true" (dragstart)="onDragStart($event, 'larga')">
+              <i class="bi bi-layout-sidebar"></i> Mesa Larga (8 pax)
+            </div>
+          </div>
+
+          <hr>
+          <button class="btn btn-primary w-100" (click)="guardarDistribucion()">
+            <i class="bi bi-save"></i> Guardar Distribución
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plano del Restaurante -->
+    <div class="col-md-9">
+      <div class="card shadow-lg h-100">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Plano del Salón</h5>
+          <span class="badge bg-secondary">Arrastra y suelta para organizar</span>
+        </div>
+        <div class="card-body p-0 position-relative"
+             style="height: 600px; background-color: #f8f9fa; background-image: radial-gradient(#dee2e6 1px, transparent 1px); background-size: 20px 20px;"
+             (dragover)="onDragOver($event)"
+             (drop)="onDrop($event)">
+
+          <!-- Mesas en el plano -->
+          <div *ngFor="let mesa of mesas"
+               class="mesa-item"
+               [ngClass]="{'mesa-cuadrada': mesa.tipo === 'cuadrada', 'mesa-redonda': mesa.tipo === 'redonda', 'mesa-larga': mesa.tipo === 'larga'}"
+               [style.top.px]="mesa.y"
+               [style.left.px]="mesa.x"
+               draggable="true"
+               (dragstart)="onDragStartMesa($event, mesa)">
+            <span>{{ mesa.numero }}</span>
+            <button class="btn-close btn-close-white position-absolute top-0 end-0 m-1" style="font-size: 0.5rem;" (click)="eliminarMesa(mesa)"></button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

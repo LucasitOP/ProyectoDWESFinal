@@ -6,21 +6,28 @@ import { ReservaListComponent } from './features/reservas/pages/reserva-list/res
 import { ReservaCreateComponent } from './features/reservas/pages/reserva-create/reserva-create.component';
 import { PlatoListComponent } from './features/platos/pages/plato-list/plato-list.component';
 import { PlatoCreateComponent } from './features/platos/pages/plato-create/plato-create.component';
-import { authGuard } from '@auth0/auth0-angular';
+import { DashboardComponent } from './features/dashboard/pages/dashboard/dashboard.component';
+import { MesasComponent } from './features/mesas/pages/mesas/mesas.component';
+import { authGuardFn } from '@auth0/auth0-angular';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [authGuardFn]
+  },
+  {
     path: 'reservas',
     component: ReservaListComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuardFn]
   },
   {
     path: 'reservas/create',
     component: ReservaCreateComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuardFn]
   },
   {
     path: 'platos',
@@ -29,7 +36,12 @@ export const routes: Routes = [
   {
     path: 'platos/create',
     component: PlatoCreateComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuardFn]
+  },
+  {
+    path: 'mesas',
+    component: MesasComponent,
+    canActivate: [authGuardFn]
   },
   { path: '**', redirectTo: '' }
 ];
