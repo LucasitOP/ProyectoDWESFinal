@@ -1,0 +1,70 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">Nueva Reserva</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()">
+
+            <!-- Nombre -->
+            <div class="mb-3">
+              <label for="nombreCliente" class="form-label">Nombre Completo</label>
+              <input type="text" class="form-control" id="nombreCliente" formControlName="nombreCliente"
+                     [ngClass]="{'is-invalid': reservaForm.get('nombreCliente')?.invalid && reservaForm.get('nombreCliente')?.touched}">
+              <div class="invalid-feedback">
+                El nombre es obligatorio (mínimo 3 caracteres).
+              </div>
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Teléfono (para SMS)</label>
+              <input type="tel" class="form-control" id="telefono" formControlName="telefono" placeholder="600123456"
+                     [ngClass]="{'is-invalid': reservaForm.get('telefono')?.invalid && reservaForm.get('telefono')?.touched}">
+              <div class="invalid-feedback">
+                Introduce un número de teléfono válido (9 dígitos).
+              </div>
+            </div>
+
+            <!-- Fecha y Hora -->
+            <div class="mb-3">
+              <label for="fechaHora" class="form-label">Fecha y Hora</label>
+              <input type="datetime-local" class="form-control" id="fechaHora" formControlName="fechaHora"
+                     [ngClass]="{'is-invalid': reservaForm.get('fechaHora')?.invalid && reservaForm.get('fechaHora')?.touched}">
+              <div class="invalid-feedback">
+                La fecha y hora son obligatorias.
+              </div>
+            </div>
+
+            <!-- Número de Personas -->
+            <div class="mb-3">
+              <label for="numeroPersonas" class="form-label">Número de Personas</label>
+              <input type="number" class="form-control" id="numeroPersonas" formControlName="numeroPersonas" min="1" max="20"
+                     [ngClass]="{'is-invalid': reservaForm.get('numeroPersonas')?.invalid && reservaForm.get('numeroPersonas')?.touched}">
+              <div class="invalid-feedback">
+                Mínimo 1 persona, máximo 20.
+              </div>
+            </div>
+
+            <!-- Restaurante (Select simple por ahora) -->
+            <div class="mb-3">
+              <label for="restaurantId" class="form-label">Restaurante</label>
+              <select class="form-select" id="restaurantId" formControlName="restaurantId">
+                <option value="restaurante-1">Restaurante Italiano</option>
+                <option value="restaurante-2">Asador Argentino</option>
+                <option value="restaurante-3">Sushi Bar</option>
+              </select>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <button type="button" class="btn btn-secondary me-md-2" routerLink="/reservas">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="reservaForm.invalid">Confirmar Reserva</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

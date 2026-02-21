@@ -1,0 +1,38 @@
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Nuestro Menú</h2>
+    <!-- Solo mostrar si es admin (por ahora lo dejamos visible para probar) -->
+    <button class="btn btn-primary" routerLink="/platos/create">
+      <i class="bi bi-plus-lg"></i> Añadir Plato
+    </button>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col" *ngFor="let plato of platos$ | async">
+      <div class="card h-100 shadow-sm">
+        <!-- Imagen del plato (si no tiene, mostrar placeholder) -->
+        <img [src]="plato.imageUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'"
+             class="card-img-top"
+             alt="{{ plato.nombre }}"
+             style="height: 200px; object-fit: cover;">
+
+        <div class="card-body">
+          <h5 class="card-title">{{ plato.nombre }}</h5>
+          <p class="card-text text-muted">{{ plato.descripcion }}</p>
+          <h6 class="card-subtitle mb-2 text-primary">{{ plato.precio | currency:'EUR' }}</h6>
+        </div>
+
+        <div class="card-footer bg-transparent border-top-0">
+          <button class="btn btn-outline-primary w-100" routerLink="/reservas/create">
+            Reservar Mesa
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje si no hay platos -->
+  <div *ngIf="(platos$ | async)?.length === 0" class="text-center py-5">
+    <p class="text-muted">No hay platos disponibles en este momento.</p>
+  </div>
+</div>
