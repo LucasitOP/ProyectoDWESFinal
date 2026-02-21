@@ -21,6 +21,10 @@ public class Reserva {
     @Column(nullable = false)
     private String nombreCliente;
 
+    // Nuevo campo para el teléfono del cliente
+    @Column(nullable = false)
+    private String telefono;
+
     @Column(nullable = false)
     private LocalDateTime fechaHora;
 
