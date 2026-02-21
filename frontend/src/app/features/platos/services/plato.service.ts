@@ -4,21 +4,22 @@ import { Observable } from 'rxjs';
 import { Plato } from '../../../shared/models/plato.model';
 
 /**
- * Servicio para gestionar las operaciones CRUD de Platos.
- * Interactúa con el backend Spring Boot y Cloudinary para imágenes.
+ * Servicio Angular para operaciones CRUD sobre platos.
+ * Comunica con el backend Spring Boot a través de HttpClient.
+ * Utiliza el proxy local configurado en proxy.conf.json para redirigir /api al backend.
  */
 @Injectable({
   providedIn: 'root'
 })
 export class PlatoService {
 
-  private apiUrl = '/api/platos'; // Usamos el proxy configurado
+  private apiUrl = '/api/platos'; // Usa proxy local
 
   constructor(private http: HttpClient) { }
 
   /**
-   * Obtiene todos los platos disponibles en el sistema.
-   * @returns Observable con la lista de platos.
+   * Obtiene el listado completo de todos los platos del sistema.
+   * @return Observable con array de platos.
    */
   getPlatos(): Observable<Plato[]> {
     return this.http.get<Plato[]>(this.apiUrl);
@@ -26,17 +27,17 @@ export class PlatoService {
 
   /**
    * Obtiene un plato específico por su ID.
-   * @param id ID del plato.
-   * @returns Observable con el plato encontrado.
+   * @param id Identificador del plato.
+   * @return Observable con el plato encontrado.
    */
   getPlato(id: number): Observable<Plato> {
     return this.http.get<Plato>(`${this.apiUrl}/${id}`);
   }
 
   /**
-   * Obtiene los platos filtrados por restaurante.
-   * @param restaurantId ID del restaurante (string).
-   * @returns Observable con la lista de platos del restaurante.
+   * Filtra y obtiene platos de un restaurante específico.
+   * @param restaurantId ID del restaurante.
+   * @return Observable con array de platos del restaurante.
    */
   getPlatosByRestaurante(restaurantId: string): Observable<Plato[]> {
     return this.http.get<Plato[]>(`${this.apiUrl}/restaurante/${restaurantId}`);
@@ -44,10 +45,10 @@ export class PlatoService {
 
   /**
    * Crea un nuevo plato en el sistema.
-   * Si se proporciona una imagen, se sube a Cloudinary a través del backend.
-   * @param plato Objeto Plato con los datos.
-   * @param imageFile Archivo de imagen opcional.
-   * @returns Observable con el plato creado.
+   * Soporta subida de imagen que se procesa en el backend y sube a Cloudinary.
+   * @param plato Datos del plato (nombre, descripción, precio, restaurantId).
+   * @param imageFile Archivo de imagen (opcional).
+   * @return Observable con el plato creado.
    */
   createPlato(plato: any, imageFile?: File): Observable<Plato> {
     const formData = new FormData();
@@ -65,10 +66,11 @@ export class PlatoService {
 
   /**
    * Actualiza un plato existente.
-   * @param id ID del plato a actualizar.
+   * Permite cambiar la imagen si se proporciona un archivo nuevo.
+   * @param id Identificador del plato a actualizar.
    * @param plato Nuevos datos del plato.
-   * @param imageFile Nueva imagen opcional.
-   * @returns Observable con el plato actualizado.
+   * @param imageFile Nueva imagen (opcional).
+   * @return Observable con el plato actualizado.
    */
   updatePlato(id: number, plato: any, imageFile?: File): Observable<Plato> {
     const formData = new FormData();
@@ -86,8 +88,8 @@ export class PlatoService {
 
   /**
    * Elimina un plato del sistema.
-   * @param id ID del plato a eliminar.
-   * @returns Observable vacío.
+   * @param id Identificador del plato a eliminar.
+   * @return Observable vacío (completa cuando la petición termina).
    */
   deletePlato(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
