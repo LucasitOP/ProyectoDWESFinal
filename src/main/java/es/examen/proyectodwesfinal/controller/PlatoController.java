@@ -20,6 +20,7 @@ public class PlatoController {
     private final PlatoService platoService;
 
     @GetMapping
+    // Público: Cualquiera puede ver el menú
     public ResponseEntity<List<Plato>> getAllPlatos() {
         return ResponseEntity.ok(platoService.findAll());
     }
@@ -30,7 +31,7 @@ public class PlatoController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('SCOPE_write:platos')") // Solo restaurantes pueden crear platos
+    @PreAuthorize("hasAnyAuthority('Encargado', 'Administrador')")
     public ResponseEntity<Plato> createPlato(
             @RequestParam("nombre") String nombre,
             @RequestParam("descripcion") String descripcion,
@@ -53,7 +54,7 @@ public class PlatoController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_write:platos')")
+    @PreAuthorize("hasAuthority('Administrador')")
     public ResponseEntity<Void> deletePlato(@PathVariable Long id) {
         if (platoService.findById(id).isPresent()) {
             platoService.deleteById(id);

@@ -20,13 +20,13 @@ public class ReservaController {
     private final TwilioService twilioService;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('SCOPE_read:reservas')")
+    @PreAuthorize("hasAnyAuthority('Empleado', 'Encargado', 'Administrador')")
     public ResponseEntity<List<Reserva>> getAllReservas() {
         return ResponseEntity.ok(reservaService.findAll());
     }
 
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasAnyAuthority('Empleado', 'Encargado', 'Administrador')")
     public ResponseEntity<Reserva> createReserva(@RequestBody Reserva reserva) {
         if (reserva.getEstado() == null) {
             reserva.setEstado(Reserva.EstadoReserva.PENDIENTE);
@@ -49,7 +49,7 @@ public class ReservaController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_write:reservas')")
+    @PreAuthorize("hasAnyAuthority('Encargado', 'Administrador')")
     public ResponseEntity<Reserva> updateReserva(@PathVariable Long id, @RequestBody Reserva reserva) {
         return reservaService.findById(id)
                 .map(existingReserva -> {
@@ -65,7 +65,7 @@ public class ReservaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('SCOPE_write:reservas')")
+    @PreAuthorize("hasAuthority('Administrador')")
     public ResponseEntity<Void> deleteReserva(@PathVariable Long id) {
         if (reservaService.findById(id).isPresent()) {
             reservaService.deleteById(id);

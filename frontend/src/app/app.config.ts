@@ -17,7 +17,7 @@ export const appConfig: ApplicationConfig = {
       clientId: 'mLVvJhU1ND98QoZY3dHkVFOEswzCo0TJ',
       authorizationParams: {
         redirect_uri: window.location.origin,
-       // audience: 'https://Timoc-Manager-reservas',
+        audience: 'https://Timoc-Manager-reservas',
       },
       httpInterceptor: {
         allowedList: [
