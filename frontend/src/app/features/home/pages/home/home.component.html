@@ -4,53 +4,65 @@
   <div class="container position-relative">
     <div class="row align-items-center" style="min-height: 400px;">
       <div class="col-lg-8 text-center text-lg-start">
-        <h1 class="display-3 fw-bold mb-3">Gestiona tu Restaurante como un Profesional</h1>
-        <p class="lead mb-4">La solución integral para reservas, menús digitales y gestión de mesas. Todo en una sola plataforma.</p>
+        <h1 class="display-3 fw-bold mb-3">Descubre y Reserva en los Mejores Restaurantes</h1>
+        <p class="lead mb-4">Encuentra tu mesa ideal, consulta el menú y reserva en segundos. Sin llamadas, sin esperas.</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center justify-content-lg-start">
-          <button class="btn btn-primary btn-lg px-4 me-sm-3" routerLink="/register">Empezar Gratis</button>
-          <button class="btn btn-outline-light btn-lg px-4" routerLink="/login">Ya tengo cuenta</button>
+          <a href="#restaurantes" class="btn btn-primary btn-lg px-4 me-sm-3">Ver Restaurantes</a>
+          <button class="btn btn-outline-light btn-lg px-4" (click)="login()" *ngIf="(auth.isAuthenticated$ | async) === false">Soy Restaurador</button>
+          <button class="btn btn-outline-light btn-lg px-4" routerLink="/dashboard" *ngIf="auth.isAuthenticated$ | async">Mi Panel</button>
         </div>
       </div>
     </div>
   </div>
 </header>
 
-<!-- Features Section -->
-<section class="py-5" id="features">
+<!-- Lista de Restaurantes -->
+<section class="py-5 bg-light" id="restaurantes">
   <div class="container px-5 my-5">
-    <div class="row gx-5">
-      <div class="col-lg-4 mb-5 mb-lg-0">
-        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
-          <i class="bi bi-calendar-check fs-2"></i>
+    <div class="text-center mb-5">
+      <h2 class="fw-bolder">Restaurantes Destacados</h2>
+      <p class="lead text-muted">Explora nuestra selección de hoy</p>
+    </div>
+    <div class="row gx-5 justify-content-center">
+
+      <!-- Tarjeta de Restaurante -->
+      <div class="col-lg-4 col-md-6 mb-5" *ngFor="let restaurant of restaurants">
+        <div class="card h-100 shadow border-0 hover-card">
+          <img [src]="restaurant.image" class="card-img-top" alt="{{ restaurant.name }}" style="height: 200px; object-fit: cover;">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="badge bg-primary bg-gradient rounded-pill mb-2">Abierto</div>
+              <div class="text-warning small">
+                <i class="bi bi-star-fill"></i> {{ restaurant.rating }}
+              </div>
+            </div>
+            <a class="text-decoration-none link-dark stretched-link" [routerLink]="['/restaurante', restaurant.id, 'menu']">
+              <h5 class="card-title mb-3 fw-bold">{{ restaurant.name }}</h5>
+            </a>
+            <p class="card-text mb-0 text-muted">{{ restaurant.description }}</p>
+          </div>
+          <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+            <div class="d-flex align-items-end justify-content-between">
+              <div class="d-flex align-items-center">
+                <button class="btn btn-outline-primary btn-sm me-2" [routerLink]="['/restaurante', restaurant.id, 'menu']">Ver Menú</button>
+                <button class="btn btn-success btn-sm" [routerLink]="['/restaurante', restaurant.id, 'reservar']">Reservar</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <h2 class="h4 fw-bolder">Reservas Inteligentes</h2>
-        <p>Olvídate del papel y boli. Recibe reservas online, confirma por SMS automáticamente y evita el no-show.</p>
       </div>
-      <div class="col-lg-4 mb-5 mb-lg-0">
-        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
-          <i class="bi bi-journal-richtext fs-2"></i>
-        </div>
-        <h2 class="h4 fw-bolder">Menú Digital</h2>
-        <p>Sube fotos de tus platos, actualiza precios al instante y comparte tu carta con un código QR.</p>
-      </div>
-      <div class="col-lg-4">
-        <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3 p-3 d-inline-block">
-          <i class="bi bi-grid-3x3-gap fs-2"></i>
-        </div>
-        <h2 class="h4 fw-bolder">Mapa de Mesas</h2>
-        <p>Diseña el plano de tu salón. Organiza las mesas visualmente y asigna reservas con un simple arrastrar y soltar.</p>
-      </div>
+
     </div>
   </div>
 </section>
 
-<!-- Call to Action -->
-<section class="py-5 bg-light">
+<!-- Call to Action para Restauradores -->
+<section class="py-5 bg-dark text-white">
   <div class="container px-5 my-5">
     <div class="text-center">
-      <h2 class="fw-bolder">¿Listo para modernizar tu negocio?</h2>
-      <p class="lead mb-4">Únete a cientos de restaurantes que ya confían en nosotros.</p>
-      <a class="btn btn-primary btn-lg" routerLink="/register">Crear Cuenta Ahora</a>
+      <h2 class="fw-bolder">¿Tienes un restaurante?</h2>
+      <p class="lead mb-4">Únete a nuestra plataforma y gestiona tus reservas de forma profesional.</p>
+      <button class="btn btn-outline-light btn-lg" (click)="signup()">Registrar mi Restaurante</button>
     </div>
   </div>
 </section>

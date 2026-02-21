@@ -19,6 +19,7 @@ export const appConfig: ApplicationConfig = {
         redirect_uri: window.location.origin,
         audience: 'https://Timoc-Manager-reservas',
       },
+      cacheLocation: 'localstorage', // Para cumplir el check de la rúbrica
       httpInterceptor: {
         allowedList: [
           '/api/*' // Intercepta todas las peticiones a /api y añade el token

@@ -1,0 +1,58 @@
+.mesa-preview {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px dashed #ccc;
+  background-color: #fff;
+  cursor: grab;
+  text-align: center;
+  border-radius: 4px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.mesa-preview:hover {
+  transform: scale(1.02);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background-color: #f8f9fa;
+}
+
+.mesa-item {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #343a40; /* Dark background */
+  color: white;
+  font-weight: bold;
+  cursor: grab;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  user-select: none;
+  z-index: 10;
+}
+
+.mesa-item:active {
+  cursor: grabbing;
+}
+
+/* Formas de las mesas */
+.mesa-cuadrada {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+}
+
+.mesa-redonda {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.mesa-larga {
+  width: 100px;
+  height: 60px;
+  border-radius: 4px;
+}
+
+/* Área del plano */
+.card-body.position-relative {
+  overflow: hidden; /* Evitar que las mesas salgan del contenedor */
+}

@@ -1,48 +1,93 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- Usamos el vm$ una sola vez para todo el template -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm" *ngIf="vm$ | async as vm">
   <div class="container">
-    <a class="navbar-brand" routerLink="/">
-      <i class="bi bi-calendar-check me-2"></i>
-      ReservasApp
+    <a class="navbar-brand fw-bold" routerLink="/">
+      <i class="bi bi-calendar-check me-2 text-primary"></i>
+      Timoc Manager
     </a>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" routerLink="/">Inicio</a>
-        </li>
 
-        <!-- Enlaces SOLO para usuarios logueados -->
-        <ng-container *ngIf="auth.isAuthenticated$ | async">
+        <!-- Enlaces PÚBLICOS (Solo para Clientes / Invitados) -->
+        <ng-container *ngIf="!vm.isStaff">
           <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active" routerLink="/dashboard">Dashboard</a>
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              <i class="bi bi-house-door me-1"></i>Inicio
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Enlaces para CLIENTES (No Staff) -->
+        <ng-container *ngIf="vm.isCustomer">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/reservas" routerLinkActive="active">
+              <i class="bi bi-calendar-event me-1"></i>Mis Reservas
+            </a>
+          </li>
+        </ng-container>
+
+        <!-- Enlaces para ENCARGADOS / ADMIN (Staff) -->
+        <ng-container *ngIf="vm.isStaff">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+              <i class="bi bi-speedometer2 me-1"></i>Dashboard
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active" routerLink="/reservas">Mis Reservas</a>
+            <a class="nav-link" routerLink="/reservas" routerLinkActive="active">
+              <i class="bi bi-journal-check me-1"></i>Gestión Reservas
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active" routerLink="/platos">Menú</a>
+            <a class="nav-link" routerLink="/platos" routerLinkActive="active">
+              <i class="bi bi-book me-1"></i>Mi Menú
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLinkActive="active" routerLink="/mesas">Mapa</a>
+            <a class="nav-link" routerLink="/mesas" routerLinkActive="active">
+              <i class="bi bi-grid-3x3-gap me-1"></i>Mi Plano
+            </a>
           </li>
         </ng-container>
       </ul>
 
+      <!-- Zona de Usuario -->
       <div class="d-flex align-items-center">
         <!-- Si está logueado -->
-        <ng-container *ngIf="auth.user$ | async as user">
-          <span class="text-light me-3 d-none d-lg-block">Hola, {{ user.name }}</span>
-          <button class="btn btn-outline-light btn-sm" (click)="logout()">
-            <i class="bi bi-box-arrow-right"></i> Salir
-          </button>
+        <ng-container *ngIf="vm.isAuthenticated && (auth.user$ | async) as user">
+          <div class="dropdown me-3">
+            <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img [src]="user.picture" alt="Avatar" class="rounded-circle me-2" width="32" height="32">
+              <span class="d-none d-lg-inline">{{ user.name }}</span>
+              
+              <!-- ETIQUETAS DE ROL -->
+              <span class="badge bg-danger ms-2" *ngIf="vm.isAdmin">ADMIN</span>
+              <span class="badge bg-warning text-dark ms-2" *ngIf="vm.isStaff && !vm.isAdmin">ENCARGADO</span>
+              <span class="badge bg-info text-dark ms-2" *ngIf="vm.isCustomer">CLIENTE</span>
+              
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="userDropdown">
+              <li *ngIf="vm.isStaff"><a class="dropdown-item" routerLink="/dashboard">Panel de Control</a></li>
+              <li *ngIf="vm.isCustomer"><a class="dropdown-item" routerLink="/reservas">Mis Reservas</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button class="dropdown-item text-danger" (click)="logout()">Cerrar Sesión</button></li>
+            </ul>
+          </div>
         </ng-container>
 
         <!-- Si NO está logueado -->
-        <ng-container *ngIf="(auth.isAuthenticated$ | async) === false">
-          <button class="btn btn-outline-light me-2" (click)="login()">Iniciar Sesión</button>
-          <button class="btn btn-primary" routerLink="/register">Registrarse</button>
+        <ng-container *ngIf="!vm.isAuthenticated">
+          <button class="btn btn-outline-light me-2" (click)="login()">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Entrar
+          </button>
+          <button class="btn btn-primary" (click)="login()">
+            Registrarse
+          </button>
         </ng-container>
       </div>
     </div>

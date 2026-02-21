@@ -1,38 +1,70 @@
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Nuestro Menú</h2>
-    <!-- Solo mostrar si es admin (por ahora lo dejamos visible para probar) -->
-    <button class="btn btn-primary" routerLink="/platos/create">
-      <i class="bi bi-plus-lg"></i> Añadir Plato
+    <h2 class="fw-bold text-primary">{{ restaurantName }}</h2>
+
+    <!-- Botón de Reservar (Visible para todos) -->
+    <button class="btn btn-success shadow-sm" [routerLink]="['/restaurante', restaurantId, 'reservar']" *ngIf="restaurantId">
+      <i class="bi bi-calendar-check me-2"></i>Reservar Mesa Aquí
     </button>
+
+    <!-- Botón de Añadir Plato (Solo para Admin/Gestor) -->
+    <ng-container *ngIf="isStaff$ | async">
+      <button class="btn btn-primary shadow-sm ms-2" routerLink="/platos/create">
+        <i class="bi bi-plus-lg me-2"></i>Añadir Plato
+      </button>
+    </ng-container>
   </div>
 
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    <div class="col" *ngFor="let plato of platos$ | async">
-      <div class="card h-100 shadow-sm">
-        <!-- Imagen del plato (si no tiene, mostrar placeholder) -->
-        <img [src]="plato.imageUrl || 'https://via.placeholder.com/300x200?text=Sin+Imagen'"
-             class="card-img-top"
-             alt="{{ plato.nombre }}"
-             style="height: 200px; object-fit: cover;">
-
-        <div class="card-body">
-          <h5 class="card-title">{{ plato.nombre }}</h5>
-          <p class="card-text text-muted">{{ plato.descripcion }}</p>
-          <h6 class="card-subtitle mb-2 text-primary">{{ plato.precio | currency:'EUR' }}</h6>
+  <!-- Lista de Platos -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="platos$ | async as platos; else loading">
+    <div class="col" *ngFor="let plato of platos">
+      <div class="card h-100 shadow-sm border-0 hover-card">
+        <!-- Imagen del plato -->
+        <div class="position-relative">
+          <img [src]="plato.imageUrl || 'https://placehold.co/600x400?text=Sin+Imagen'"
+               class="card-img-top"
+               alt="{{ plato.nombre }}"
+               style="height: 200px; object-fit: cover;">
+          <span class="badge bg-dark position-absolute top-0 end-0 m-2">{{ plato.precio | currency:'EUR' }}</span>
         </div>
 
-        <div class="card-footer bg-transparent border-top-0">
-          <button class="btn btn-outline-primary w-100" routerLink="/reservas/create">
-            Reservar Mesa
-          </button>
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title fw-bold">{{ plato.nombre }}</h5>
+          <p class="card-text text-muted flex-grow-1">{{ plato.descripcion }}</p>
+
+          <div class="d-grid gap-2 mt-3">
+            <!-- Botón de Reservar específico para este plato (opcional, lleva al mismo form) -->
+            <button class="btn btn-outline-primary" [routerLink]="['/restaurante', restaurantId || plato.restaurantId, 'reservar']">
+              <i class="bi bi-calendar-plus me-2"></i>Reservar Mesa
+            </button>
+
+            <!-- Botón de Editar (Solo Staff) -->
+            <button class="btn btn-outline-secondary" [routerLink]="['/platos/edit', plato.id]" *ngIf="isStaff$ | async">
+              <i class="bi bi-pencil me-2"></i>Editar
+            </button>
+          </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Mensaje si no hay platos -->
+    <div class="col-12 text-center py-5" *ngIf="platos.length === 0">
+      <div class="text-muted">
+        <i class="bi bi-egg-fried display-1 mb-3"></i>
+        <p class="lead">No hay platos disponibles en este momento.</p>
+        <ng-container *ngIf="isStaff$ | async">
+          <button class="btn btn-link" routerLink="/platos/create">Sé el primero en añadir uno</button>
+        </ng-container>
       </div>
     </div>
   </div>
 
-  <!-- Mensaje si no hay platos -->
-  <div *ngIf="(platos$ | async)?.length === 0" class="text-center py-5">
-    <p class="text-muted">No hay platos disponibles en este momento.</p>
-  </div>
+  <!-- Template de carga -->
+  <ng-template #loading>
+    <div class="d-flex justify-content-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+    </div>
+  </ng-template>
 </div>

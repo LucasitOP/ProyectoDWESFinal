@@ -1,18 +1,24 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white">
-          <h3 class="mb-0">Añadir Nuevo Plato</h3>
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white py-3">
+          <h3 class="mb-0 fw-bold">
+            <i class="bi bi-egg-fried me-2"></i>
+            {{ isEditMode ? 'Editar Plato' : 'Añadir Nuevo Plato' }}
+          </h3>
         </div>
-        <div class="card-body">
+        <div class="card-body p-4">
           <form [formGroup]="platoForm" (ngSubmit)="onSubmit()">
 
             <!-- Nombre -->
             <div class="mb-3">
-              <label for="nombre" class="form-label">Nombre del Plato</label>
-              <input type="text" class="form-control" id="nombre" formControlName="nombre"
-                     [ngClass]="{'is-invalid': platoForm.get('nombre')?.invalid && platoForm.get('nombre')?.touched}">
+              <label for="nombre" class="form-label fw-bold">Nombre del Plato</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                <input type="text" class="form-control" id="nombre" formControlName="nombre" placeholder="Ej: Pizza Margarita"
+                       [ngClass]="{'is-invalid': platoForm.get('nombre')?.invalid && platoForm.get('nombre')?.touched}">
+              </div>
               <div class="invalid-feedback">
                 El nombre es obligatorio (mínimo 3 caracteres).
               </div>
@@ -20,9 +26,12 @@
 
             <!-- Descripción -->
             <div class="mb-3">
-              <label for="descripcion" class="form-label">Descripción</label>
-              <textarea class="form-control" id="descripcion" formControlName="descripcion" rows="3"
-                        [ngClass]="{'is-invalid': platoForm.get('descripcion')?.invalid && platoForm.get('descripcion')?.touched}"></textarea>
+              <label for="descripcion" class="form-label fw-bold">Descripción</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                <textarea class="form-control" id="descripcion" formControlName="descripcion" rows="3" placeholder="Ingredientes y detalles..."
+                          [ngClass]="{'is-invalid': platoForm.get('descripcion')?.invalid && platoForm.get('descripcion')?.touched}"></textarea>
+              </div>
               <div class="invalid-feedback">
                 La descripción es obligatoria (máximo 255 caracteres).
               </div>
@@ -30,27 +39,37 @@
 
             <!-- Precio -->
             <div class="mb-3">
-              <label for="precio" class="form-label">Precio (€)</label>
-              <input type="number" class="form-control" id="precio" formControlName="precio" step="0.01" min="0.1"
-                     [ngClass]="{'is-invalid': platoForm.get('precio')?.invalid && platoForm.get('precio')?.touched}">
+              <label for="precio" class="form-label fw-bold">Precio (€)</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-currency-euro"></i></span>
+                <input type="number" class="form-control" id="precio" formControlName="precio" step="0.01" min="0.1" placeholder="0.00"
+                       [ngClass]="{'is-invalid': platoForm.get('precio')?.invalid && platoForm.get('precio')?.touched}">
+              </div>
               <div class="invalid-feedback">
                 El precio debe ser mayor a 0.
               </div>
             </div>
 
             <!-- Imagen -->
-            <div class="mb-3">
-              <label for="imagen" class="form-label">Imagen del Plato</label>
-              <input type="file" class="form-control" id="imagen" (change)="onFileSelected($event)" accept="image/*">
-              <div class="form-text">Sube una foto atractiva del plato (opcional).</div>
+            <div class="mb-4">
+              <label for="imagen" class="form-label fw-bold">Imagen del Plato</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-image"></i></span>
+                <input type="file" class="form-control" id="imagen" (change)="onFileSelected($event)" accept="image/*">
+              </div>
+              <div class="form-text text-muted small">Sube una foto atractiva (JPG/PNG, máx 2MB).</div>
             </div>
 
-            <!-- Restaurante (Oculto por ahora, se envía hardcodeado) -->
+            <!-- Restaurante (Oculto) -->
             <input type="hidden" formControlName="restaurantId">
 
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-              <button type="button" class="btn btn-secondary me-md-2" routerLink="/platos">Cancelar</button>
-              <button type="submit" class="btn btn-primary" [disabled]="platoForm.invalid">Guardar Plato</button>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+              <button type="button" class="btn btn-light me-md-2" routerLink="/platos">
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary px-4" [disabled]="platoForm.invalid">
+                <i class="bi bi-save me-2"></i>{{ isEditMode ? 'Guardar Cambios' : 'Crear Plato' }}
+              </button>
             </div>
           </form>
         </div>

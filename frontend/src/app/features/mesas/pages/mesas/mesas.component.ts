@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import Swal from 'sweetalert2';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 interface Mesa {
   id: number;
@@ -23,8 +23,8 @@ export class MesasComponent {
   mesaArrastrada: Mesa | null = null;
   tipoMesaArrastrada: string | null = null;
 
-  constructor() {
-    // Cargar mesas guardadas (simulado por ahora)
+  constructor(private notificationService: NotificationService) {
+    // Cargar mesas guardadas
     const mesasGuardadas = localStorage.getItem('mesas');
     if (mesasGuardadas) {
       this.mesas = JSON.parse(mesasGuardadas);
@@ -82,12 +82,6 @@ export class MesasComponent {
 
   guardarDistribucion() {
     localStorage.setItem('mesas', JSON.stringify(this.mesas));
-    Swal.fire({
-      icon: 'success',
-      title: '¡Guardado!',
-      text: 'La distribución de mesas se ha guardado correctamente.',
-      timer: 1500,
-      showConfirmButton: false
-    });
+    this.notificationService.showSuccess('Distribución de mesas guardada');
   }
 }
