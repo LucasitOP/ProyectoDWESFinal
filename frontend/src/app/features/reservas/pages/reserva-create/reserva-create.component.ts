@@ -68,16 +68,13 @@ export class ReservaCreateComponent implements OnInit {
         fechaHora = fechaHora + ':00';
       }
 
-      // Estructurar el objeto para que coincida con el DTO del backend
-      // El backend espera un objeto restaurante anidado: { restaurante: { id: "..." } }
+      // Crear objeto que coincida con el modelo Reserva del backend
       const reservaData = {
         nombreCliente: rawValue.nombreCliente,
         telefono: rawValue.telefono,
         fechaHora: fechaHora,
         numeroPersonas: rawValue.numeroPersonas,
-        restaurante: {
-            id: rawValue.restaurantId
-        }
+        restaurantId: rawValue.restaurantId
       };
 
       this.reservaService.createReserva(reservaData).subscribe({
