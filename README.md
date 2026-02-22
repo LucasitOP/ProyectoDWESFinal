@@ -90,7 +90,7 @@ Para probar los diferentes roles, puedes usar las siguientes cuentas (o registra
 
 ## 🌍 Despliegue
 
-La aplicación frontend está desplegada en: **[URL_DE_TU_DEPLOY_AQUI]**
+La aplicación frontend está desplegada en: **[https://proyecto-dwes-final.vercel.app]**
 
 ## 📝 Autor
 
