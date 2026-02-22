@@ -6,6 +6,19 @@ import { RoleService } from '../../../../core/services/role.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
+/**
+ * Componente para crear y editar platos del menú.
+ *
+ * Funcionalidades:
+ * - Modo creación: Formulario vacío para nuevo plato
+ * - Modo edición: Carga datos del plato existente
+ * - Admins: Pueden seleccionar el restaurante desde un dropdown
+ * - Encargados: Restaurante asignado automáticamente
+ * - Subida opcional de imágenes a Cloudinary
+ *
+ * @author Lucas Timoc
+ * @version 1.0
+ */
 @Component({
   selector: 'app-plato-create',
   standalone: true,
@@ -20,8 +33,9 @@ export class PlatoCreateComponent implements OnInit {
   isEditMode = false;
   platoId: number | null = null;
   isAdmin = false;
-  isLoading = true; // Indicador de carga inicial
+  isLoading = true;
 
+  /** Lista de restaurantes disponibles para admins */
   restaurantes = [
     { id: 'restaurante-1', nombre: 'Restaurante Italiano' },
     { id: 'restaurante-2', nombre: 'Asador Argentino' },
@@ -43,10 +57,17 @@ export class PlatoCreateComponent implements OnInit {
     });
   }
 
+  /**
+   * Inicializa el componente.
+   * Detecta si es modo edición (ID en URL) o creación (sin ID).
+   * En modo creación, determina el restaurante según el rol:
+   * - Admin: usa el restaurante seleccionado del localStorage
+   * - Encargado: obtiene su restaurante asignado automáticamente
+   */
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
 
-    // Si es modo edición, cargar el plato primero
+    // FLUJO 1: Modo Edición - Cargar plato existente
     if (id) {
       this.isEditMode = true;
       this.platoId = Number(id);
@@ -54,18 +75,18 @@ export class PlatoCreateComponent implements OnInit {
       return;
     }
 
-    // Si es modo creación, detectar rol
+    // FLUJO 2: Modo Creación - Detectar rol y asignar restaurante
     this.roleService.isAdmin().subscribe({
       next: (admin) => {
         this.isAdmin = admin;
 
         if (admin) {
-          // Admin: usar restaurante seleccionado del localStorage
+          // Administrador: recuperar restaurante seleccionado en el selector
           const selectedRestaurant = localStorage.getItem('selectedRestaurant') || 'restaurante-1';
           this.platoForm.patchValue({ restaurantId: selectedRestaurant });
           this.isLoading = false;
         } else {
-          // Encargado: establecer su restaurante automáticamente
+          // Encargado: obtener su restaurante asignado por rol
           this.roleService.getMyRestaurantId().subscribe({
             next: (myRestaurantId) => {
               this.platoForm.patchValue({ restaurantId: myRestaurantId });
@@ -85,6 +106,11 @@ export class PlatoCreateComponent implements OnInit {
     });
   }
 
+  /**
+   * Carga los datos de un plato existente para edición.
+   * Después de cargar, detecta si el usuario es admin para mostrar u ocultar el selector de restaurante.
+   * @param id Identificador del plato a cargar
+   */
   loadPlato(id: number): void {
     this.platoService.getPlato(id).subscribe({
       next: (plato) => {
@@ -95,7 +121,7 @@ export class PlatoCreateComponent implements OnInit {
           restaurantId: plato.restaurantId
         });
 
-        // Después de cargar el plato, detectar si es admin
+        // Detectar rol para mostrar/ocultar selector de restaurante
         this.roleService.isAdmin().subscribe({
           next: (admin) => {
             this.isAdmin = admin;
@@ -114,12 +140,20 @@ export class PlatoCreateComponent implements OnInit {
     });
   }
 
+  /**
+   * Maneja la selección de archivo de imagen.
+   * @param event Evento del input file
+   */
   onFileSelected(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
     }
   }
 
+  /**
+   * Procesa el envío del formulario.
+   * Determina si debe crear o actualizar según el modo.
+   */
   onSubmit(): void {
     if (this.platoForm.valid) {
       if (this.isEditMode && this.platoId) {
@@ -132,8 +166,12 @@ export class PlatoCreateComponent implements OnInit {
     }
   }
 
+  /**
+   * Crea un nuevo plato en el sistema.
+   * Convierte el precio a número, crea FormData con los campos y la imagen (si existe).
+   * Muestra notificación de éxito/error usando SweetAlert2.
+   */
   createPlato(): void {
-    // Asegurarnos de que el precio sea un número
     const formValue = this.platoForm.value;
     formValue.precio = Number(formValue.precio);
 
@@ -160,10 +198,13 @@ export class PlatoCreateComponent implements OnInit {
     });
   }
 
+  /**
+   * Actualiza un plato existente en el sistema.
+   * Permite cambiar datos y opcionalmente reemplazar la imagen.
+   */
   updatePlato(): void {
     if (!this.platoId) return;
 
-    // Asegurarnos de que el precio sea un número
     const formValue = this.platoForm.value;
     formValue.precio = Number(formValue.precio);
 

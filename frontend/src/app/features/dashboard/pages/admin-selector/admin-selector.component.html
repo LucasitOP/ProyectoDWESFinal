@@ -10,16 +10,18 @@
     <div class="col" *ngFor="let restaurant of restaurantes">
       <div class="card h-100 shadow-lg border-0 hover-card"
            (click)="selectRestaurant(restaurant.id)"
-           style="cursor: pointer;">
+           style="cursor: pointer;"
+           role="button"
+           tabindex="0">
 
         <div class="card-body text-center p-5">
-          <div class="display-1 mb-4">{{ restaurant.icono }}</div>
+          <div class="display-1 mb-4" style="font-size: 5rem;">{{ restaurant.icono }}</div>
           <h3 class="card-title fw-bold mb-3">{{ restaurant.nombre }}</h3>
           <p class="card-text text-muted mb-4">{{ restaurant.descripcion }}</p>
 
-          <button class="btn btn-primary btn-lg px-4">
-            <i class="bi bi-arrow-right-circle me-2"></i>Gestionar
-          </button>
+          <div class="text-primary fw-bold">
+            <i class="bi bi-arrow-right-circle me-2"></i>Click para Gestionar
+          </div>
         </div>
 
         <div class="card-footer bg-light border-0 text-center py-3">

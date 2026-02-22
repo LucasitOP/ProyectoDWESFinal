@@ -7,6 +7,22 @@ import { Observable, switchMap, of } from 'rxjs';
 import { AuthService } from '@auth0/auth0-angular';
 import { RoleService } from '../../../../core/services/role.service';
 
+/**
+ * Componente para listar platos del menú.
+ *
+ * Tiene dos modos de funcionamiento:
+ * 1. Vista pública (/restaurante/:id/menu): Muestra menú de un restaurante específico con botón de reservar
+ * 2. Vista staff (/platos): Muestra menú del restaurante gestionado por el usuario
+ *
+ * Para Admins en vista staff:
+ * - Usa el restaurante seleccionado del localStorage
+ *
+ * Para Encargados en vista staff:
+ * - Usa su restaurante asignado automáticamente
+ *
+ * @author Lucas Timoc
+ * @version 1.0
+ */
 @Component({
   selector: 'app-plato-list',
   standalone: true,

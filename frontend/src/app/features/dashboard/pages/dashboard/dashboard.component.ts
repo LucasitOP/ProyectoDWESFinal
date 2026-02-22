@@ -4,6 +4,23 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { RoleService } from '../../../../core/services/role.service';
 import { Observable } from 'rxjs';
 
+/**
+ * Componente del dashboard principal para staff (Encargados y Administradores).
+ *
+ * Funcionalidades:
+ * - Muestra KPIs y estadísticas del restaurante
+ * - Accesos rápidos a gestión de reservas, platos y mesas
+ * - Para Admins: Muestra botón "Cambiar Restaurante" para cambiar contexto
+ * - Para Encargados: Muestra solo su restaurante asignado
+ *
+ * El restaurante actual se determina por:
+ * 1. Query param ?restaurant=X (cuando viene del selector)
+ * 2. localStorage 'selectedRestaurant' (persistencia)
+ * 3. Restaurante asignado al encargado (si no es admin)
+ *
+ * @author Lucas Timoc
+ * @version 1.0
+ */
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -16,6 +33,7 @@ export class DashboardComponent implements OnInit {
   selectedRestaurant: string | null = null;
   restaurantName: string = '';
 
+  /** Mapeo de IDs a nombres de restaurantes */
   restaurantes: { [key: string]: string } = {
     'restaurante-1': 'Restaurante Italiano',
     'restaurante-2': 'Asador Argentino',
@@ -30,19 +48,25 @@ export class DashboardComponent implements OnInit {
     this.isAdmin$ = this.roleService.isAdmin();
   }
 
+  /**
+   * Inicializa el componente y determina el restaurante activo.
+   * Prioriza query params sobre localStorage, y si no hay ninguno,
+   * obtiene el restaurante asignado al encargado.
+   */
   ngOnInit(): void {
-    // Obtener restaurante de query params o localStorage
     this.route.queryParams.subscribe(params => {
       if (params['restaurant']) {
+        // Restaurante viene del selector (admin)
         this.selectedRestaurant = params['restaurant'];
         if (this.selectedRestaurant) {
           localStorage.setItem('selectedRestaurant', this.selectedRestaurant);
         }
       } else {
+        // Intentar recuperar de localStorage
         this.selectedRestaurant = localStorage.getItem('selectedRestaurant');
       }
 
-      // Si es encargado y no hay selección, usar su restaurante
+      // Fallback para encargados sin selección previa
       if (!this.selectedRestaurant) {
         this.roleService.isAdmin().subscribe(isAdmin => {
           if (!isAdmin) {
@@ -61,14 +85,19 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  /**
+   * Actualiza el nombre del restaurante mostrado en el header.
+   */
   updateRestaurantName(): void {
     if (this.selectedRestaurant) {
       this.restaurantName = this.restaurantes[this.selectedRestaurant] || 'Restaurante';
     }
   }
 
+  /**
+   * Redirige al selector de restaurantes (solo para admins).
+   */
   changeRestaurant(): void {
-    // Redirigir al selector
     this.router.navigate(['/admin/selector']);
   }
 }
