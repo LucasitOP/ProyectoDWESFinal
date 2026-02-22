@@ -9,6 +9,7 @@ import { PlatoListComponent } from './features/platos/pages/plato-list/plato-lis
 import { PlatoCreateComponent } from './features/platos/pages/plato-create/plato-create.component';
 import { PlatoDetailComponent } from './features/platos/pages/plato-detail/plato-detail.component';
 import { DashboardComponent } from './features/dashboard/pages/dashboard/dashboard.component';
+import { AdminSelectorComponent } from './features/dashboard/pages/admin-selector/admin-selector.component';
 import { MesasComponent } from './features/mesas/pages/mesas/mesas.component';
 import { NotFoundComponent } from './shared/pages/not-found/not-found.component';
 import { authGuardFn, AuthService } from '@auth0/auth0-angular';
@@ -38,6 +39,24 @@ const staffHomeRedirectGuard: CanActivateFn = () => {
   );
 };
 
+// Guard para dashboard: Si es admin, redirige al selector
+const dashboardGuard: CanActivateFn = () => {
+  const roleService = inject(RoleService);
+  const router = inject(Router);
+
+  return roleService.isAdmin().pipe(
+    take(1),
+    map(isAdmin => {
+      if (isAdmin) {
+        // Admin debe ir al selector de restaurantes
+        return router.createUrlTree(['/admin/selector']);
+      }
+      // Encargado va directo al dashboard
+      return true;
+    })
+  );
+};
+
 export const routes: Routes = [
   // Aplicamos el guard aquí para expulsar al Encargado de la vista Cliente
   { path: '', component: HomeComponent, canActivate: [staffHomeRedirectGuard] },
@@ -58,9 +77,14 @@ export const routes: Routes = [
 
   // Rutas Privadas de Gestión (Vista Dueño/Admin)
   {
+    path: 'admin/selector', // Selector de restaurante para admins
+    component: AdminSelectorComponent,
+    canActivate: [authGuardFn, staffGuard]
+  },
+  {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [authGuardFn, staffGuard] // Solo Staff
+    canActivate: [authGuardFn, staffGuard, dashboardGuard] // Redirige admins al selector
   },
   {
     path: 'reservas', // Mis reservas (como cliente) o Gestión (como admin)

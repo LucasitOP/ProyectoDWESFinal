@@ -44,41 +44,48 @@ export class PlatoCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Verificar si es administrador
+    const id = this.route.snapshot.paramMap.get('id');
+
+    // Si es modo edición, cargar el plato primero
+    if (id) {
+      this.isEditMode = true;
+      this.platoId = Number(id);
+      this.loadPlato(this.platoId);
+      return;
+    }
+
+    // Si es modo creación, detectar rol
     this.roleService.isAdmin().subscribe({
       next: (admin) => {
         this.isAdmin = admin;
 
-        // Si NO es admin, establecer su restaurante automáticamente
-        if (!admin) {
+        if (admin) {
+          // Admin: usar restaurante seleccionado del localStorage
+          const selectedRestaurant = localStorage.getItem('selectedRestaurant') || 'restaurante-1';
+          this.platoForm.patchValue({ restaurantId: selectedRestaurant });
+          this.isLoading = false;
+        } else {
+          // Encargado: establecer su restaurante automáticamente
           this.roleService.getMyRestaurantId().subscribe({
             next: (myRestaurantId) => {
               this.platoForm.patchValue({ restaurantId: myRestaurantId });
               this.isLoading = false;
             },
             error: () => {
+              console.error('Error obteniendo restaurante del encargado');
               this.isLoading = false;
             }
           });
-        } else {
-          this.isLoading = false;
         }
       },
       error: () => {
+        console.error('Error verificando si es admin');
         this.isLoading = false;
       }
     });
-
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.isEditMode = true;
-      this.platoId = Number(id);
-      this.loadPlato(this.platoId);
-    }
   }
 
   loadPlato(id: number): void {
-    this.isLoading = true;
     this.platoService.getPlato(id).subscribe({
       next: (plato) => {
         this.platoForm.patchValue({
@@ -87,7 +94,17 @@ export class PlatoCreateComponent implements OnInit {
           precio: plato.precio,
           restaurantId: plato.restaurantId
         });
-        this.isLoading = false;
+
+        // Después de cargar el plato, detectar si es admin
+        this.roleService.isAdmin().subscribe({
+          next: (admin) => {
+            this.isAdmin = admin;
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          }
+        });
       },
       error: (err) => {
         console.error('Error cargando plato:', err);

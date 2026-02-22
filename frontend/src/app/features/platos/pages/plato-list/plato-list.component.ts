@@ -40,10 +40,16 @@ export class PlatoListComponent implements OnInit {
       this.restaurantName = this.getRestaurantName(this.restaurantId);
     } else {
       // Si no hay ID en la URL, estamos en /platos (gestión propia)
-      this.platos$ = this.roleService.isStaff().pipe(
-        switchMap(isStaff => {
-          if (isStaff) {
-            // Si es Staff, cargar SU restaurante
+      this.platos$ = this.roleService.isAdmin().pipe(
+        switchMap(isAdmin => {
+          if (isAdmin) {
+            // Admin: usar restaurante seleccionado del localStorage
+            const selectedRestaurant = localStorage.getItem('selectedRestaurant') || 'restaurante-1';
+            this.restaurantId = selectedRestaurant;
+            this.restaurantName = this.getRestaurantName(selectedRestaurant);
+            return this.platoService.getPlatosByRestaurante(selectedRestaurant);
+          } else {
+            // Encargado: usar su restaurante asignado
             return this.roleService.getMyRestaurantId().pipe(
               switchMap(myId => {
                 this.restaurantId = myId;
@@ -51,10 +57,6 @@ export class PlatoListComponent implements OnInit {
                 return this.platoService.getPlatosByRestaurante(myId);
               })
             );
-          } else {
-            // Si es Cliente y entra aquí por error, no mostrar nada o redirigir
-            // (Aunque el Guard debería haberlo parado antes)
-            return of([]);
           }
         })
       );
