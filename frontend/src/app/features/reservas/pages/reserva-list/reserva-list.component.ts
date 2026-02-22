@@ -7,6 +7,18 @@ import { Observable } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { NotificationService } from '../../../../core/services/notification.service';
 
+/**
+ * Componente para listar y gestionar reservas.
+ *
+ * Funcionalidades:
+ * - Muestra todas las reservas del usuario/restaurante
+ * - Permite cancelar reservas
+ * - Staff puede crear nuevas reservas con botón "Nueva Reserva"
+ * - Muestra información simplificada: Restaurante, Fecha, Personas, Estado
+ *
+ * @author Lucas Timoc
+ * @version 1.0
+ */
 @Component({
   selector: 'app-reserva-list',
   standalone: true,
@@ -27,10 +39,18 @@ export class ReservaListComponent implements OnInit {
     this.isStaff$ = this.roleService.isStaff();
   }
 
+  /**
+   * Inicializa el componente y carga la lista de reservas.
+   */
   ngOnInit(): void {
     this.reservas$ = this.reservaService.getReservas();
   }
 
+  /**
+   * Cancela una reserva solicitando confirmación previa.
+   * Recarga la lista de reservas después de la eliminación.
+   * @param id Identificador de la reserva a cancelar
+   */
   deleteReserva(id: number): void {
     if (confirm('¿Estás seguro de que quieres cancelar esta reserva?')) {
       this.reservaService.deleteReserva(id).subscribe(() => {
@@ -40,6 +60,11 @@ export class ReservaListComponent implements OnInit {
     }
   }
 
+  /**
+   * Obtiene el nombre legible de un restaurante.
+   * @param id Identificador del restaurante
+   * @returns Nombre del restaurante
+   */
   getRestaurantName(id: string): string {
     const names: { [key: string]: string } = {
       'restaurante-1': 'Restaurante Italiano',

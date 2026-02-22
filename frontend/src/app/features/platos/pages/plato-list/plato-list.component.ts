@@ -46,20 +46,28 @@ export class PlatoListComponent implements OnInit {
     this.isStaff$ = this.roleService.isStaff();
   }
 
+  /**
+   * Inicializa el componente y carga los platos correspondientes.
+   *
+   * Lógica de determinación del restaurante:
+   * - Si hay :id en la URL → Vista pública de ese restaurante
+   * - Si NO hay :id → Vista staff, determinar restaurante según rol:
+   *   · Admin → Usar restaurante del localStorage (seleccionado en el selector)
+   *   · Encargado → Usar su restaurante asignado
+   */
   ngOnInit(): void {
-    // Obtener el ID del restaurante de la URL
     this.restaurantId = this.route.snapshot.paramMap.get('id');
 
     if (this.restaurantId) {
-      // Si hay ID en la URL, es una vista pública de un restaurante
+      // Vista pública: mostrar menú de restaurante específico
       this.platos$ = this.platoService.getPlatosByRestaurante(this.restaurantId);
       this.restaurantName = this.getRestaurantName(this.restaurantId);
     } else {
-      // Si no hay ID en la URL, estamos en /platos (gestión propia)
+      // Vista staff: determinar restaurante según rol
       this.platos$ = this.roleService.isAdmin().pipe(
         switchMap(isAdmin => {
           if (isAdmin) {
-            // Admin: usar restaurante seleccionado del localStorage
+            // Admin: usar restaurante seleccionado en el selector
             const selectedRestaurant = localStorage.getItem('selectedRestaurant') || 'restaurante-1';
             this.restaurantId = selectedRestaurant;
             this.restaurantName = this.getRestaurantName(selectedRestaurant);
@@ -79,6 +87,11 @@ export class PlatoListComponent implements OnInit {
     }
   }
 
+  /**
+   * Obtiene el nombre legible de un restaurante por su ID.
+   * @param id Identificador del restaurante
+   * @returns Nombre del restaurante o fallback
+   */
   getRestaurantName(id: string): string {
     const names: { [key: string]: string } = {
       'restaurante-1': 'Restaurante Italiano',

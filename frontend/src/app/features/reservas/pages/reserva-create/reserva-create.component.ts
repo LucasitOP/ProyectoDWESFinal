@@ -42,27 +42,38 @@ export class ReservaCreateComponent implements OnInit {
     });
   }
 
+  /**
+   * Inicializa el componente y detecta el contexto de uso.
+   *
+   * Contextos:
+   * - Con :id en URL → Cliente público reservando en restaurante específico (campo bloqueado)
+   * - Sin :id en URL → Staff creando reserva (selector de restaurante visible)
+   */
   ngOnInit(): void {
-    // Verificar si es staff
+    // Detectar si el usuario es staff
     this.roleService.isStaff().subscribe(staff => {
       this.isStaff = staff;
     });
 
-    // Obtener el ID del restaurante de la URL
     this.restaurantId = this.route.snapshot.paramMap.get('id');
 
     if (this.restaurantId) {
-      // Si venimos de una página de restaurante, pre-seleccionar y deshabilitar el campo
+      // Vista pública: restaurante pre-seleccionado y bloqueado
       this.reservaForm.patchValue({ restaurantId: this.restaurantId });
-      this.reservaForm.get('restaurantId')?.disable(); // El usuario no puede cambiarlo
+      this.reservaForm.get('restaurantId')?.disable();
       this.restaurantName = this.getRestaurantName(this.restaurantId);
     } else {
-      // Si es una reserva manual desde el dashboard, permitir seleccionar
-      this.reservaForm.patchValue({ restaurantId: 'restaurante-1' }); // Valor por defecto
+      // Vista staff: restaurante seleccionable
+      this.reservaForm.patchValue({ restaurantId: 'restaurante-1' });
       this.restaurantName = this.getRestaurantName('restaurante-1');
     }
   }
 
+  /**
+   * Obtiene el nombre legible de un restaurante.
+   * @param id Identificador del restaurante
+   * @returns Nombre del restaurante
+   */
   getRestaurantName(id: string): string {
     const names: { [key: string]: string } = {
       'restaurante-1': 'Restaurante Italiano',
@@ -72,21 +83,25 @@ export class ReservaCreateComponent implements OnInit {
     return names[id] || 'Restaurante Seleccionado';
   }
 
+  /**
+   * Procesa el envío del formulario de reserva.
+   * Formatea la fecha al formato ISO esperado por el backend (añade segundos).
+   * Intenta enviar SMS de confirmación si Twilio está configurado (backend).
+   */
   onSubmit(): void {
     if (this.reservaForm.valid) {
-      // Si el campo está deshabilitado, Angular no lo incluye en .value, así que lo añadimos manualmente
+      // getRawValue() incluye campos deshabilitados
       const rawValue = this.reservaForm.getRawValue();
 
-      // Formatear la fecha para que Java la entienda (añadir :00 segundos)
+      // Formatear fecha de datetime-local a ISO con segundos
       let fechaHora = rawValue.fechaHora;
       if (fechaHora && fechaHora.length === 16) {
         fechaHora = fechaHora + ':00';
       }
 
-      // Actualizar nombre del restaurante seleccionado
+      // Actualizar nombre para mostrar en mensaje de confirmación
       this.restaurantName = this.getRestaurantName(rawValue.restaurantId);
 
-      // Crear objeto que coincida con el modelo Reserva del backend
       const reservaData = {
         nombreCliente: rawValue.nombreCliente,
         telefono: rawValue.telefono,

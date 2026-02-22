@@ -7,8 +7,22 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 /**
- * Inicializador de datos de muestra para desarrollo.
- * Carga platos típicos italianos en el restaurante-1 al arrancar la aplicación.
+ * Inicializador de datos de muestra para desarrollo y demostración.
+ *
+ * Se ejecuta automáticamente al arrancar la aplicación Spring Boot.
+ * Carga un menú completo de platos italianos típicos en el restaurante-1
+ * si la base de datos está vacía (útil con H2 en memoria).
+ *
+ * Platos incluidos:
+ * - Pizza Margarita (€12.50)
+ * - Pasta Carbonara (€14.00)
+ * - Lasagna alla Bolognese (€15.50)
+ * - Risotto ai Funghi (€16.00)
+ * - Tiramisù (€6.50)
+ * - Panna Cotta (€5.50)
+ *
+ * @author Lucas Timoc
+ * @version 1.0
  */
 @Component
 @RequiredArgsConstructor
@@ -16,16 +30,22 @@ public class DataInitializer implements CommandLineRunner {
 
     private final PlatoRepository platoRepository;
 
+    /**
+     * Se ejecuta al iniciar la aplicación.
+     * Verifica si la BD está vacía y carga datos de muestra.
+     *
+     * @param args Argumentos de línea de comandos (no utilizados)
+     */
     @Override
     public void run(String... args) {
-        // Solo inicializar si la BD está vacía
         if (platoRepository.count() == 0) {
             initRestauranteItaliano();
         }
     }
 
     /**
-     * Crea platos típicos italianos para el restaurante-1.
+     * Crea y persiste 6 platos típicos de cocina italiana para el restaurante-1.
+     * Utiliza URLs de imagen de demostración de Cloudinary.
      */
     private void initRestauranteItaliano() {
         // Pizza Margarita
