@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PlatoService } from '../../services/plato.service';
+import { RoleService } from '../../../../core/services/role.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
@@ -18,10 +19,18 @@ export class PlatoCreateComponent implements OnInit {
   selectedFile: File | undefined;
   isEditMode = false;
   platoId: number | null = null;
+  isAdmin = false;
+
+  restaurantes = [
+    { id: 'restaurante-1', nombre: 'Restaurante Italiano' },
+    { id: 'restaurante-2', nombre: 'Asador Argentino' },
+    { id: 'restaurante-3', nombre: 'Sushi Bar' }
+  ];
 
   constructor(
     private fb: FormBuilder,
     private platoService: PlatoService,
+    private roleService: RoleService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -34,6 +43,18 @@ export class PlatoCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Verificar si es administrador
+    this.roleService.isAdmin().subscribe(admin => {
+      this.isAdmin = admin;
+
+      // Si NO es admin, establecer su restaurante automáticamente
+      if (!admin) {
+        this.roleService.getMyRestaurantId().subscribe(myRestaurantId => {
+          this.platoForm.patchValue({ restaurantId: myRestaurantId });
+        });
+      }
+    });
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
