@@ -20,6 +20,7 @@ export class PlatoCreateComponent implements OnInit {
   isEditMode = false;
   platoId: number | null = null;
   isAdmin = false;
+  isLoading = true; // Indicador de carga inicial
 
   restaurantes = [
     { id: 'restaurante-1', nombre: 'Restaurante Italiano' },
@@ -44,14 +45,27 @@ export class PlatoCreateComponent implements OnInit {
 
   ngOnInit(): void {
     // Verificar si es administrador
-    this.roleService.isAdmin().subscribe(admin => {
-      this.isAdmin = admin;
+    this.roleService.isAdmin().subscribe({
+      next: (admin) => {
+        this.isAdmin = admin;
 
-      // Si NO es admin, establecer su restaurante automáticamente
-      if (!admin) {
-        this.roleService.getMyRestaurantId().subscribe(myRestaurantId => {
-          this.platoForm.patchValue({ restaurantId: myRestaurantId });
-        });
+        // Si NO es admin, establecer su restaurante automáticamente
+        if (!admin) {
+          this.roleService.getMyRestaurantId().subscribe({
+            next: (myRestaurantId) => {
+              this.platoForm.patchValue({ restaurantId: myRestaurantId });
+              this.isLoading = false;
+            },
+            error: () => {
+              this.isLoading = false;
+            }
+          });
+        } else {
+          this.isLoading = false;
+        }
+      },
+      error: () => {
+        this.isLoading = false;
       }
     });
 
@@ -64,6 +78,7 @@ export class PlatoCreateComponent implements OnInit {
   }
 
   loadPlato(id: number): void {
+    this.isLoading = true;
     this.platoService.getPlato(id).subscribe({
       next: (plato) => {
         this.platoForm.patchValue({
@@ -72,9 +87,11 @@ export class PlatoCreateComponent implements OnInit {
           precio: plato.precio,
           restaurantId: plato.restaurantId
         });
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error cargando plato:', err);
+        this.isLoading = false;
         this.router.navigate(['/platos']);
       }
     });

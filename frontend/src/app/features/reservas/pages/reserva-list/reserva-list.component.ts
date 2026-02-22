@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReservaService } from '../../services/reserva.service';
+import { RoleService } from '../../../../core/services/role.service';
 import { Reserva } from '../../../../shared/models/reserva.model';
 import { Observable } from 'rxjs';
 import { RouterLink } from '@angular/router';
@@ -16,11 +17,15 @@ import { NotificationService } from '../../../../core/services/notification.serv
 export class ReservaListComponent implements OnInit {
 
   reservas$: Observable<Reserva[]> | undefined;
+  isStaff$: Observable<boolean>;
 
   constructor(
     private reservaService: ReservaService,
+    private roleService: RoleService,
     private notificationService: NotificationService
-  ) { }
+  ) {
+    this.isStaff$ = this.roleService.isStaff();
+  }
 
   ngOnInit(): void {
     this.reservas$ = this.reservaService.getReservas();

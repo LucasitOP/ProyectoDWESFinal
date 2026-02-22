@@ -2,17 +2,17 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-primary">{{ restaurantName }}</h2>
 
-    <!-- Botón de Reservar (Visible para todos) -->
-    <button class="btn btn-success shadow-sm" [routerLink]="['/restaurante', restaurantId, 'reservar']" *ngIf="restaurantId">
-      <i class="bi bi-calendar-check me-2"></i>Reservar Mesa Aquí
-    </button>
+    <div class="d-flex gap-2">
+      <!-- Botón de Reservar (Solo visible para clientes públicos con restaurantId en URL) -->
+      <button class="btn btn-success shadow-sm" [routerLink]="['/restaurante', restaurantId, 'reservar']" *ngIf="restaurantId">
+        <i class="bi bi-calendar-check me-2"></i>Reservar Mesa Aquí
+      </button>
 
-    <!-- Botón de Añadir Plato (Solo para Admin/Gestor) -->
-    <ng-container *ngIf="isStaff$ | async">
-      <button class="btn btn-primary shadow-sm ms-2" routerLink="/platos/create">
+      <!-- Botón de Añadir Plato (Solo para Admin/Gestor) -->
+      <button class="btn btn-primary shadow-sm" routerLink="/platos/create" *ngIf="isStaff$ | async">
         <i class="bi bi-plus-lg me-2"></i>Añadir Plato
       </button>
-    </ng-container>
+    </div>
   </div>
 
   <!-- Lista de Platos -->
@@ -33,8 +33,8 @@
           <p class="card-text text-muted flex-grow-1">{{ plato.descripcion }}</p>
 
           <div class="d-grid gap-2 mt-3">
-            <!-- Botón de Reservar específico para este plato (opcional, lleva al mismo form) -->
-            <button class="btn btn-outline-primary" [routerLink]="['/restaurante', restaurantId || plato.restaurantId, 'reservar']">
+            <!-- Botón de Reservar Mesa (Solo visible para clientes públicos con restaurantId en URL) -->
+            <button class="btn btn-outline-primary" [routerLink]="['/restaurante', restaurantId || plato.restaurantId, 'reservar']" *ngIf="restaurantId">
               <i class="bi bi-calendar-plus me-2"></i>Reservar Mesa
             </button>
 

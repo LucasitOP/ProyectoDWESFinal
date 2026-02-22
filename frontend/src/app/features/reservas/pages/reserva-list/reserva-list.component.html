@@ -1,7 +1,8 @@
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold text-primary">Mis Reservas</h2>
-    <button class="btn btn-primary shadow-sm" routerLink="/reservas/create">
+    <!-- Solo staff puede crear reservas desde aquí -->
+    <button class="btn btn-primary shadow-sm" routerLink="/reservas/create" *ngIf="isStaff$ | async">
       <i class="bi bi-plus-lg me-2"></i>Nueva Reserva
     </button>
   </div>
@@ -12,8 +13,8 @@
         <table class="table table-hover mb-0 align-middle">
           <thead class="table-light">
             <tr>
-              <th scope="col" class="ps-4">ID</th>
-              <th scope="col">Restaurante</th>
+              <!-- Columnas básicas para clientes -->
+              <th scope="col" class="ps-4">Restaurante</th>
               <th scope="col">Fecha y Hora</th>
               <th scope="col">Personas</th>
               <th scope="col">Estado</th>
@@ -22,13 +23,12 @@
           </thead>
           <tbody>
             <tr *ngFor="let reserva of reservas$ | async">
-              <td class="ps-4 fw-bold text-muted">#{{ reserva.id }}</td>
-              <td>
+              <td class="ps-4">
                 <div class="d-flex align-items-center">
                   <div class="avatar bg-light rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
                     <i class="bi bi-shop text-primary"></i>
                   </div>
-                  <span>{{ getRestaurantName(reserva.restaurantId) }}</span>
+                  <span class="fw-semibold">{{ getRestaurantName(reserva.restaurantId) }}</span>
                 </div>
               </td>
               <td>
@@ -37,7 +37,7 @@
               </td>
               <td>
                 <i class="bi bi-people me-1 text-muted"></i>
-                {{ reserva.numeroPersonas }} pax
+                {{ reserva.numeroPersonas }} personas
               </td>
               <td>
                 <span class="badge rounded-pill"
@@ -50,21 +50,23 @@
                 </span>
               </td>
               <td class="text-end pe-4">
+                <!-- Solo permitir cancelar, no editar -->
                 <button class="btn btn-sm btn-outline-danger"
                         (click)="deleteReserva(reserva.id!)"
+                        [disabled]="reserva.estado === 'CANCELADA'"
                         title="Cancelar Reserva">
-                  <i class="bi bi-trash"></i>
+                  <i class="bi bi-x-circle me-1"></i>Cancelar
                 </button>
               </td>
             </tr>
 
             <!-- Mensaje si no hay reservas -->
             <tr *ngIf="(reservas$ | async)?.length === 0">
-              <td colspan="6" class="text-center py-5">
+              <td colspan="5" class="text-center py-5">
                 <div class="text-muted">
                   <i class="bi bi-calendar-x display-4 mb-3 d-block"></i>
                   <p class="lead mb-0">No tienes reservas activas.</p>
-                  <small>¡Haz una reserva ahora y disfruta!</small>
+                  <small>Visita nuestros restaurantes y haz una reserva.</small>
                 </div>
               </td>
             </tr>
