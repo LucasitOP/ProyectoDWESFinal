@@ -68,12 +68,12 @@ export const routes: Routes = [
     canActivate: [authGuardFn] // Accesible para todos los logueados (la lógica interna filtra)
   },
   {
-    path: 'platos', // Gestión de menú (lista propia del encargado)
-    component: PlatoListComponent,
-    canActivate: [authGuardFn, staffGuard]
+    path: 'reservas/create', // Crear nueva reserva (staff)
+    component: ReservaCreateComponent,
+    canActivate: [authGuardFn, staffGuard] // Solo Staff
   },
   {
-    path: 'platos/create', // Solo para gestores
+    path: 'platos/create', // Solo para gestores (DEBE IR ANTES que /platos)
     component: PlatoCreateComponent,
     canActivate: [authGuardFn, staffGuard] // Solo Staff
   },
@@ -81,6 +81,11 @@ export const routes: Routes = [
     path: 'platos/edit/:id', // Editar plato
     component: PlatoCreateComponent,
     canActivate: [authGuardFn, staffGuard] // Solo Staff
+  },
+  {
+    path: 'platos', // Gestión de menú (lista propia del encargado)
+    component: PlatoListComponent,
+    canActivate: [authGuardFn, staffGuard]
   },
   {
     path: 'mesas', // Solo para gestores

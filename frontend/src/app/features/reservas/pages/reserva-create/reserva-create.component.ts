@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReservaService } from '../../services/reserva.service';
+import { RoleService } from '../../../../core/services/role.service';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 
@@ -17,10 +18,18 @@ export class ReservaCreateComponent implements OnInit {
   reservaForm: FormGroup;
   restaurantId: string | null = null;
   restaurantName: string = 'Restaurante';
+  isStaff = false;
+
+  restaurantes = [
+    { id: 'restaurante-1', nombre: 'Restaurante Italiano' },
+    { id: 'restaurante-2', nombre: 'Asador Argentino' },
+    { id: 'restaurante-3', nombre: 'Sushi Bar' }
+  ];
 
   constructor(
     private fb: FormBuilder,
     private reservaService: ReservaService,
+    private roleService: RoleService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -34,6 +43,11 @@ export class ReservaCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Verificar si es staff
+    this.roleService.isStaff().subscribe(staff => {
+      this.isStaff = staff;
+    });
+
     // Obtener el ID del restaurante de la URL
     this.restaurantId = this.route.snapshot.paramMap.get('id');
 
@@ -45,6 +59,7 @@ export class ReservaCreateComponent implements OnInit {
     } else {
       // Si es una reserva manual desde el dashboard, permitir seleccionar
       this.reservaForm.patchValue({ restaurantId: 'restaurante-1' }); // Valor por defecto
+      this.restaurantName = this.getRestaurantName('restaurante-1');
     }
   }
 
@@ -67,6 +82,9 @@ export class ReservaCreateComponent implements OnInit {
       if (fechaHora && fechaHora.length === 16) {
         fechaHora = fechaHora + ':00';
       }
+
+      // Actualizar nombre del restaurante seleccionado
+      this.restaurantName = this.getRestaurantName(rawValue.restaurantId);
 
       // Crear objeto que coincida con el modelo Reserva del backend
       const reservaData = {

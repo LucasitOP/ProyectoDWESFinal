@@ -12,13 +12,15 @@
           <form [formGroup]="reservaForm" (ngSubmit)="onSubmit()">
 
             <!-- Restaurante (Solo visible si NO venimos de un restaurante específico) -->
-            <div class="mb-3" *ngIf="!restaurantId">
+            <div class="mb-3" *ngIf="!restaurantId && isStaff">
               <label for="restaurantId" class="form-label fw-bold">Selecciona Restaurante</label>
-              <select class="form-select" id="restaurantId" formControlName="restaurantId">
-                <option value="restaurante-1">Restaurante Italiano</option>
-                <option value="restaurante-2">Asador Argentino</option>
-                <option value="restaurante-3">Sushi Bar</option>
-              </select>
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-shop"></i></span>
+                <select class="form-select" id="restaurantId" formControlName="restaurantId">
+                  <option *ngFor="let rest of restaurantes" [value]="rest.id">{{ rest.nombre }}</option>
+                </select>
+              </div>
+              <div class="form-text text-muted small">Selecciona el restaurante para esta reserva.</div>
             </div>
 
             <!-- Nombre -->
